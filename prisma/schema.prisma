@@ -1,0 +1,275 @@
+// DiáriaCamp — Schema Prisma / PostgreSQL
+// Modelo desnormalizado (nomes duplicados como coordinatorName, workerName, etc.)
+// de propósito: espelha exatamente as interfaces TypeScript do front-end
+// (src/types.ts) para minimizar a camada de mapeamento entre banco e UI.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------
+// Usuários do sistema (Administrador, Gestor, Coordenador)
+// ------------------------------------------------------------------
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String // 'admin' | 'gestor' | 'coordenador'
+  avatar       String   @default("")
+  teamZone     String?
+  phone        String?
+  active       Boolean  @default(true)
+  managerId    String?
+  managerName  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+  @@index([managerId])
+  @@map("users")
+}
+
+// ------------------------------------------------------------------
+// Trabalhadores de campanha
+// ------------------------------------------------------------------
+model Worker {
+  id              String  @id @default(cuid())
+  avatar          String?
+  name            String
+  cpf             String  @unique
+  birthDate       String?
+  phone           String
+  city            String
+  state           String
+  role            String // WorkerRole
+  teamZone        String
+  coordinatorId   String
+  coordinatorName String
+  managerId       String?
+  managerName     String?
+  status          String
+  standardRate    Float
+
+  // Dados eleitorais
+  voterRegistration  String?
+  voterZone          String?
+  voterSection       String?
+  voterCity          String?
+  voterState         String?
+  voterDocumentPhoto String? @db.Text
+
+  // Pagamento
+  preferredPaymentMethod String
+  pixType                String?
+  pixKey                 String?
+  pixAccountHolder       String?
+  pixAccountHolderCpf    String?
+  bankName               String?
+  bankAgency             String?
+  bankAccount            String?
+  bankAccountType        String?
+
+  // Liberação / aprovação
+  approvalStatus   String?
+  approvalDate     String?
+  approvedById     String?
+  approvedByName   String?
+  approvalNotes    String? @db.Text
+  rejectionReason  String? @db.Text
+  registrationDate String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([coordinatorId])
+  @@index([managerId])
+  @@index([status])
+  @@map("workers")
+}
+
+// ------------------------------------------------------------------
+// Diárias (lançamentos de campo)
+// ------------------------------------------------------------------
+model DailyRecord {
+  id              String  @id @default(cuid())
+  batchId         String?
+  workerId        String
+  workerName      String
+  workerRole      String
+  coordinatorId   String
+  coordinatorName String
+  managerId       String?
+  managerName     String?
+  teamZone        String
+  city            String
+  location        String
+  activityType    String
+  date            String // YYYY-MM-DD
+  amount          Float
+  paymentMethod   String
+  status          String
+  notes           String? @db.Text
+  shift           String
+
+  createdById   String
+  createdByName String
+  createdAt     String // ISO datetime
+
+  approvedById   String?
+  approvedByName String?
+  approvedAt     String?
+
+  rejectedById    String?
+  rejectedByName  String?
+  rejectedAt      String?
+  rejectionReason String? @db.Text
+
+  updatedById   String?
+  updatedByName String?
+  updatedAt     String?
+
+  paidById   String?
+  paidByName String?
+  paidAt     String?
+
+  receiptUrl         String?  @db.Text
+  receiptFileName    String?
+  deliveredByName    String?
+  receivedBy         String?
+  receiptConfirmed   Boolean?
+  cashNotes          String?  @db.Text
+  receiptNumber      String?
+  paymentBatchId     String?
+  paymentBatchNumber String?
+
+  isDuplicateOverridden Boolean?
+  overrideAdminId       String?
+  overrideAdminName     String?
+
+  pixKey              String?
+  pixType             String?
+  pixAccountHolder    String?
+  pixAccountHolderCpf String?
+
+  auditLog Json?
+
+  reversalReason String? @db.Text
+  reversalAt     String?
+  revertedByName String?
+
+  createdAtDb DateTime @default(now())
+
+  @@index([workerId])
+  @@index([coordinatorId])
+  @@index([managerId])
+  @@index([date])
+  @@index([status])
+  @@index([batchId])
+  @@map("daily_records")
+}
+
+// ------------------------------------------------------------------
+// Faltas registradas
+// ------------------------------------------------------------------
+model WorkerAbsence {
+  id             String  @id @default(cuid())
+  workerId       String
+  workerName     String
+  date           String
+  reason         String  @db.Text
+  recordedById   String?
+  recordedByName String?
+  createdAt      String
+
+  @@index([workerId])
+  @@index([date])
+  @@map("worker_absences")
+}
+
+// ------------------------------------------------------------------
+// Lotes de pagamento
+// ------------------------------------------------------------------
+model PaymentBatch {
+  id            String  @id @default(cuid())
+  batchNumber   String  @unique
+  date          String
+  totalAmount   Float
+  totalPeople   Int
+  pixCount      Int     @default(0)
+  pixAmount     Float   @default(0)
+  cashCount     Int     @default(0)
+  cashAmount    Float   @default(0)
+  dailyIds      Json // string[]
+  createdById   String
+  createdByName String
+  createdAt     String
+  notes         String? @db.Text
+
+  @@map("payment_batches")
+}
+
+// ------------------------------------------------------------------
+// Pagamentos / recibos financeiros
+// ------------------------------------------------------------------
+model FinancialPayment {
+  id              String  @id @default(cuid())
+  receiptNumber   String
+  workerId        String
+  workerName      String
+  workerCpf       String
+  workerRole      String
+  date            String
+  amount          Float
+  paymentMethod   String
+  referencePeriod String
+  description     String? @db.Text
+  diariaIds       Json?
+
+  pixKey   String?
+  pixType  String?
+  bankName String?
+  notes    String? @db.Text
+
+  createdById     String
+  createdByName   String
+  createdAt       String
+  deliveredByName String?
+  receivedBy      String?
+
+  signedByWorker Boolean?
+  signedAt       String?
+
+  isReverted     Boolean?
+  reversalReason String?  @db.Text
+  reversalAt     String?
+  revertedByName String?
+
+  @@index([workerId])
+  @@map("financial_payments")
+}
+
+// ------------------------------------------------------------------
+// Histórico de reversões de pagamento
+// ------------------------------------------------------------------
+model PaymentReversal {
+  id              String  @id @default(cuid())
+  workerId        String
+  workerName      String
+  amount          Float
+  reason          String  @db.Text
+  date            String
+  revertedById    String
+  revertedByName  String
+  revertedByRole  String
+  diariaIds       Json
+  receiptNumber   String?
+  referencePeriod String?
+
+  @@map("payment_reversals")
+}

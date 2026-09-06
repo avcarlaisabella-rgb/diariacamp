@@ -1,0 +1,44 @@
+# Stack completa (app + PostgreSQL) para rodar localmente ou na VPS via Coolify
+# (Coolify também aceita este arquivo diretamente como recurso "Docker Compose").
+#
+# Uso local:
+#   docker compose up --build
+#   Depois (na 1ª vez): docker compose exec app npm run db:seed
+#
+# Na VPS: ajuste as senhas/variáveis abaixo (ou use variáveis de ambiente do Coolify)
+# antes de subir em produção.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: diariacamp
+      POSTGRES_PASSWORD: diariacamp
+      POSTGRES_DB: diariacamp
+    volumes:
+      - diariacamp_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diariacamp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://diariacamp:diariacamp@db:5432/diariacamp?schema=public"
+      SESSION_SECRET: "troque-por-um-valor-aleatorio-forte-em-producao"
+      APP_URL: "http://localhost:3000"
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  diariacamp_pgdata:
