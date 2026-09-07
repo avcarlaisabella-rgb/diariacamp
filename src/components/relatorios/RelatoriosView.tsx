@@ -1,25 +1,29 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, formatDate, maskCpf, exportToCsv } from '../../utils/formatters';
-import { 
-  FileText, 
-  Download, 
-  Printer, 
-  Filter, 
-  Calendar, 
-  Users, 
-  CreditCard, 
-  Banknote, 
-  CheckCircle2, 
-  Clock, 
-  Building2, 
-  BarChart3, 
+import {
+  FileText,
+  Download,
+  Printer,
+  Filter,
+  Calendar,
+  Users,
+  CreditCard,
+  Banknote,
+  CheckCircle2,
+  Clock,
+  Building2,
+  BarChart3,
   TrendingUp,
   X,
-  Search
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
+
+const DIARIAS_PAGE_SIZE = 10;
 
 export const RelatoriosView: React.FC = () => {
   const { diarias, workers, currentUser, showNotification } = useApp();
@@ -34,6 +38,7 @@ export const RelatoriosView: React.FC = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Todas');
   const [selectedStatus, setSelectedStatus] = useState('Todas');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Extract unique filter options
   const cities = useMemo(() => {
@@ -71,6 +76,18 @@ export const RelatoriosView: React.FC = () => {
       return true;
     });
   }, [diarias, startDate, endDate, selectedCity, selectedGestor, selectedCoord, selectedWorkerId, selectedPaymentMethod, selectedStatus, searchTerm]);
+
+  // Pagination of the detailed list (10 por página)
+  const totalPages = Math.max(1, Math.ceil(filteredDiarias.length / DIARIAS_PAGE_SIZE));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredDiarias]);
+
+  const paginatedDiarias = useMemo(() => {
+    const start = (currentPage - 1) * DIARIAS_PAGE_SIZE;
+    return filteredDiarias.slice(start, start + DIARIAS_PAGE_SIZE);
+  }, [filteredDiarias, currentPage]);
 
   // Metrics calculation
   const metrics = useMemo(() => {
@@ -536,6 +553,9 @@ export const RelatoriosView: React.FC = () => {
         <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="font-bold text-sm text-slate-900">
             Detalhamento das Diárias ({filteredDiarias.length} registros encontrados)
+            {filteredDiarias.length > 0 && (
+              <span className="text-slate-400 font-medium"> — página {currentPage} de {totalPages}</span>
+            )}
           </div>
           <div className="text-xs text-slate-500">
             Total filtrado: <strong className="text-slate-900">{formatMoney(metrics.totalGeral)}</strong>
@@ -549,7 +569,7 @@ export const RelatoriosView: React.FC = () => {
               Nenhuma diária encontrada para os filtros selecionados.
             </div>
           ) : (
-            filteredDiarias.map((d, idx) => (
+            paginatedDiarias.map((d, idx) => (
               <div key={d?.id ? `rel-card-${d.id}-${idx}` : `rel-card-idx-${idx}`} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -615,7 +635,7 @@ export const RelatoriosView: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredDiarias.map((d, idx) => (
+              {paginatedDiarias.map((d, idx) => (
                 <tr key={d?.id ? `rel-row-${d.id}-${idx}` : `rel-row-idx-${idx}`} className="hover:bg-slate-50">
                   <td className="px-3 py-2.5 font-semibold text-slate-700 truncate">
                     {formatDate(d.date)}
@@ -664,6 +684,40 @@ export const RelatoriosView: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls (Hidden on print) */}
+        {filteredDiarias.length > DIARIAS_PAGE_SIZE && (
+          <div className="print:hidden p-3.5 border-t border-slate-200 flex items-center justify-between gap-3">
+            <div className="text-[11px] text-slate-500">
+              Mostrando <strong className="text-slate-700">{(currentPage - 1) * DIARIAS_PAGE_SIZE + 1}</strong>–
+              <strong className="text-slate-700">{Math.min(currentPage * DIARIAS_PAGE_SIZE, filteredDiarias.length)}</strong> de{' '}
+              <strong className="text-slate-700">{filteredDiarias.length}</strong>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                aria-label="Página anterior"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="text-xs font-bold text-slate-700 px-2">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                aria-label="Próxima página"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
