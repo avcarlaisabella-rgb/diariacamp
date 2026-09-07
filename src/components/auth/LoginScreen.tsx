@@ -79,7 +79,7 @@ export const LoginScreen: React.FC = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-3 shadow-inner">
             <Shield className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">DiáriaCamp</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Gestão de Campanha</h1>
           <p className="text-xs uppercase tracking-widest text-emerald-400 font-semibold mt-1">
             Gestão Eleitoral & Diárias
           </p>
@@ -300,7 +300,7 @@ export const LoginScreen: React.FC = () => {
 
       {/* Footer copyright */}
       <div className="mt-8 text-center text-xs text-slate-500">
-        &copy; {new Date().getFullYear()} DiáriaCamp &bull; Sistema de Campanha Eleitoral
+        &copy; {new Date().getFullYear()} Gestão de Campanha &bull; Sistema de Campanha Eleitoral
       </div>
     </div>
   );

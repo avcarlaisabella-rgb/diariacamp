@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
                 <Shield className="w-4 h-4 text-emerald-400" />
               </div>
               <div className="text-base font-black tracking-tight text-slate-900 leading-tight flex items-center gap-1.5">
-                <span>DiáriaCamp</span>
+                <span>Gestão de Campanha</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
               </div>
             </button>

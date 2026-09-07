@@ -169,7 +169,7 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
           </div>
 
           <div className="text-center text-[11px] text-slate-400 pt-3">
-            {diaria.city}, {todayFormatted} — Sistema DiáriaCamp (Autenticação Digital: {receiptNum})
+            {diaria.city}, {todayFormatted} — Sistema Gestão de Campanha (Autenticação Digital: {receiptNum})
           </div>
         </div>
 
