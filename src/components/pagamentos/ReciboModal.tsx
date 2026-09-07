@@ -87,9 +87,6 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
           {/* Receipt Header */}
           <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <div className="text-[11px] font-black uppercase tracking-wider text-slate-500">
-                Comitê Financeiro de Campanha Eleitoral
-              </div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight">
                 RECIBO DE DIÁRIA DE PRESTAÇÃO DE SERVIÇOS
               </h2>
@@ -115,7 +112,7 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
           {/* Receipt Statement */}
           <div className="text-xs sm:text-sm text-slate-700 leading-relaxed text-justify space-y-3">
             <p>
-              Recebi do Comitê de Campanha a importância líquida de{' '}
+              Recebi a importância líquida de{' '}
               <strong className="text-slate-900">{formatMoney(diaria.amount)}</strong> ({numeroParaExtenso(diaria.amount)}), em moeda corrente nacional (dinheiro em espécie), referente à diária de serviços de{' '}
               <strong className="text-slate-900">{diaria.workerRole} ({diaria.activityType})</strong> prestados no dia{' '}
               <strong className="text-slate-900">{formatDate(diaria.date)}</strong> na cidade de{' '}

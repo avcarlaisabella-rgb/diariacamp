@@ -50,7 +50,6 @@ CARGO/FUNÇÃO: ${payment.workerRole}
 REFERÊNCIA: ${payment.referencePeriod}
 FORMA DE PAGAMENTO: ${payment.paymentMethod}
 LOCAL E DATA: Belém - PA, ${formattedDate}
-PAGADOR: Comitê Financeiro de Campanha
     `.trim();
 
     navigator.clipboard.writeText(textToCopy);
@@ -119,10 +118,7 @@ PAGADOR: Comitê Financeiro de Campanha
           <div className="border-b-2 border-slate-800 pb-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  Comitê Financeiro de Campanha Eleitoral
-                </span>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                   RECIBO DE PAGAMENTO DE PRESTAÇÃO DE SERVIÇOS
                 </h1>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -202,7 +198,7 @@ PAGADOR: Comitê Financeiro de Campanha
           {/* Legal Discharge Statement */}
           <div className="text-xs text-slate-700 leading-relaxed bg-white border border-slate-200 p-4 rounded-xl text-justify">
             <p>
-              Recebi(emos) do <strong>COMITÊ FINANCEIRO DE CAMPANHA ELEITORAL</strong> a importância líquida supra de{' '}
+              Recebi(emos) a importância líquida supra de{' '}
               <strong>{formatMoney(payment.amount)} ({valorExtenso})</strong>, através de <strong>{payment.paymentMethod}</strong>, 
               referente à remuneração por prestação de serviços de <strong>{payment.workerRole}</strong> no período de{' '}
               <strong>{payment.referencePeriod}</strong>.
@@ -235,9 +231,6 @@ PAGADOR: Comitê Financeiro de Campanha
             {/* Payer Signature */}
             <div className="text-center flex flex-col items-center">
               <div className="w-full border-b border-slate-900 mb-2"></div>
-              <div className="font-black text-slate-900 text-xs sm:text-sm">
-                {payment.deliveredByName || 'Comitê Financeiro'}
-              </div>
               <div className="text-[11px] text-slate-600 font-medium">
                 Responsável Financeiro / Pagador
               </div>
