@@ -46,6 +46,7 @@ export const TrabalhadoresView: React.FC = () => {
     updateWorker,
     toggleWorkerActive,
     updateWorkerStatus,
+    deleteWorker,
     workerRoles,
     addWorkerRole,
     removeWorkerRole
@@ -70,6 +71,10 @@ export const TrabalhadoresView: React.FC = () => {
   const [newRoleName, setNewRoleName] = useState('');
   const [newRoleRate, setNewRoleRate] = useState('80');
   const [rolesError, setRolesError] = useState('');
+
+  // Excluir Trabalhador
+  const [deletingWorker, setDeletingWorker] = useState<Worker | null>(null);
+  const [deleteError, setDeleteError] = useState('');
 
   // 3-Step Form State
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
@@ -342,6 +347,18 @@ export const TrabalhadoresView: React.FC = () => {
     if (!result.ok) {
       setRolesError(result.error || 'Não foi possível remover a função.');
     }
+  };
+
+  // Excluir Trabalhador
+  const handleConfirmDeleteWorker = () => {
+    if (!deletingWorker) return;
+    setDeleteError('');
+    const result = deleteWorker(deletingWorker.id);
+    if (!result.ok) {
+      setDeleteError(result.error || 'Não foi possível excluir este trabalhador.');
+      return;
+    }
+    setDeletingWorker(null);
   };
 
   // Submit Final Form
@@ -660,12 +677,12 @@ export const TrabalhadoresView: React.FC = () => {
             <table className="w-full text-left text-xs table-fixed">
               <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
                 <tr>
-                  <th className="w-[32%] px-3.5 py-3">Trabalhador & CPF</th>
-                  <th className="w-[18%] px-3 py-3">Função & Local</th>
-                  <th className="w-[18%] px-3 py-3">Coordenação & PIX</th>
-                  <th className="w-[12%] px-3 py-3 text-right">Diária Padrão</th>
-                  <th className="w-[10%] px-3 py-3 text-center">Status</th>
-                  <th className="w-[10%] px-3 py-3 text-right">Ações</th>
+                  <th className="w-[27%] px-3.5 py-3">Trabalhador & CPF</th>
+                  <th className="w-[15%] px-3 py-3">Função & Local</th>
+                  <th className="w-[15%] px-3 py-3">Coordenação & PIX</th>
+                  <th className="w-[11%] px-3 py-3 text-right">Diária Padrão</th>
+                  <th className="w-[9%] px-3 py-3 text-center">Status</th>
+                  <th className="w-[23%] px-3 py-3 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -709,25 +726,25 @@ export const TrabalhadoresView: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setViewingWorker(w)}
                           title="Visualizar Ficha Completa"
-                          className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer"
+                          className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer shrink-0"
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleOpenEdit(w)}
                           title="Editar Ficha"
-                          className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer"
+                          className="p-1.5 text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 cursor-pointer shrink-0"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => toggleWorkerActive(w.id)}
                           title={w.status === 'Inativo' ? 'Ativar Trabalhador' : 'Desativar Trabalhador'}
-                          className={`p-1.5 rounded-lg border cursor-pointer ${
+                          className={`p-1.5 rounded-lg border cursor-pointer shrink-0 ${
                             w.status === 'Inativo'
                               ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'
                               : 'text-slate-400 hover:text-rose-600 border-slate-200 hover:bg-rose-50'
@@ -735,6 +752,15 @@ export const TrabalhadoresView: React.FC = () => {
                         >
                           <Power className="w-3.5 h-3.5" />
                         </button>
+                        {currentUser?.role === 'admin' && (
+                          <button
+                            onClick={() => { setDeletingWorker(w); setDeleteError(''); }}
+                            title="Excluir Trabalhador"
+                            className="p-1.5 text-slate-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg border border-slate-200 hover:border-rose-200 cursor-pointer shrink-0"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -1734,6 +1760,46 @@ export const TrabalhadoresView: React.FC = () => {
                   })
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmar Exclusão de Trabalhador */}
+      {deletingWorker && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200">
+            <div className="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">Excluir Trabalhador</h3>
+            <p className="text-xs text-slate-600 mt-1 mb-4 leading-relaxed">
+              Tem certeza que deseja excluir <strong>{deletingWorker.name}</strong> permanentemente? Essa ação não pode ser desfeita.
+              {' '}Se o trabalhador tiver diárias ou pagamentos registrados, use "Desativar" em vez de excluir.
+            </p>
+
+            {deleteError && (
+              <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-800 text-xs">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                <span>{deleteError}</span>
+              </div>
+            )}
+
+            <div className="flex gap-2 justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => { setDeletingWorker(null); setDeleteError(''); }}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteWorker}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl shadow cursor-pointer"
+              >
+                Excluir Definitivamente
+              </button>
             </div>
           </div>
         </div>

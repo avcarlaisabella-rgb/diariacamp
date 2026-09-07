@@ -21,6 +21,7 @@ import {
   persistCreateWorker,
   persistUpdateWorker,
   persistUpdateWorkersMany,
+  persistDeleteWorker,
 } from '../app/actions/workers';
 import { persistCreateWorkerRole, persistDeleteWorkerRole } from '../app/actions/workerRoles';
 import {
@@ -128,6 +129,8 @@ interface AppContextType {
   updateWorker: (id: string, data: Partial<Worker>) => void;
   toggleWorkerActive: (id: string) => void;
   updateWorkerStatus: (id: string, status: 'Ativo' | 'Em campo' | 'Inativo') => void;
+  deleteWorker: (id: string) => { ok: boolean; error?: string };
+  canDeleteWorker: (id: string) => { canDelete: boolean; reason?: string };
   // Funções de Trabalhador (Admin/Gestor)
   addWorkerRole: (name: string, defaultRate: number) => { ok: boolean; error?: string };
   removeWorkerRole: (id: string) => { ok: boolean; error?: string };
@@ -1426,6 +1429,36 @@ export const AppProvider: React.FC<{
     return { ok: true };
   };
 
+  // Rule: Do NOT delete workers with history (diárias, pagamentos)!
+  const canDeleteWorker = (id: string): { canDelete: boolean; reason?: string } => {
+    const hasDiarias = diarias.some(d => d.workerId === id);
+    const hasPayments = financialPayments.some(p => p.workerId === id);
+
+    if (hasDiarias || hasPayments) {
+      return {
+        canDelete: false,
+        reason: 'Este trabalhador possui histórico vinculado na campanha (diárias ou pagamentos registrados). Para manter a integridade da prestação de contas, você deve apenas desativar o cadastro.',
+      };
+    }
+    return { canDelete: true };
+  };
+
+  const deleteWorker = (id: string): { ok: boolean; error?: string } => {
+    const worker = workers.find(w => w.id === id);
+    if (!worker) return { ok: false, error: 'Trabalhador não encontrado.' };
+
+    const check = canDeleteWorker(id);
+    if (!check.canDelete) {
+      showNotification(check.reason || 'Não é possível excluir este trabalhador.');
+      return { ok: false, error: check.reason };
+    }
+
+    setWorkers(prev => prev.filter(w => w.id !== id));
+    sync(persistDeleteWorker(id));
+    showNotification(`Trabalhador ${worker.name} excluído com sucesso!`);
+    return { ok: true };
+  };
+
   const updateCurrentUserProfile = (data: { name: string; email: string; avatar: string; password?: string }) => {
     if (!currentUser) return;
     const updated: User = {
@@ -1532,6 +1565,8 @@ export const AppProvider: React.FC<{
         updateWorker,
         toggleWorkerActive,
         updateWorkerStatus,
+        deleteWorker,
+        canDeleteWorker,
         addWorkerRole,
         removeWorkerRole,
         liberarWorker,
