@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Worker, WorkerRole, PaymentMethod } from '../../types';
-import { formatMoney } from '../../utils/formatters';
+import { formatMoney, DEFAULT_AVATAR } from '../../utils/formatters';
 import {
   Users,
   Search,
@@ -97,7 +97,7 @@ export const TrabalhadoresView: React.FC = () => {
     coordinatorId: 'usr_coord1',
     managerId: 'usr_gestor',
     status: 'Ativo' as 'Ativo' | 'Inativo' | 'Em campo',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    avatar: DEFAULT_AVATAR,
 
     // Step 2 - Dados Eleitorais
     voterRegistration: '',
@@ -209,7 +209,7 @@ export const TrabalhadoresView: React.FC = () => {
       coordinatorId: defaultCoord?.id || 'usr_coord1',
       managerId: defaultCoord?.managerId || 'usr_gestor',
       status: 'Ativo',
-      avatar: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000)}?w=120&auto=format&fit=crop&q=80`,
+      avatar: DEFAULT_AVATAR,
       voterRegistration: '',
       voterZone: '',
       voterSection: '',
@@ -250,7 +250,7 @@ export const TrabalhadoresView: React.FC = () => {
       coordinatorId: worker.coordinatorId,
       managerId: worker.managerId || 'usr_gestor',
       status: worker.status === 'Inativo' ? 'Inativo' : worker.status === 'Em campo' ? 'Em campo' : 'Ativo',
-      avatar: worker.avatar || '',
+      avatar: worker.avatar || DEFAULT_AVATAR,
       voterRegistration: worker.voterRegistration || '',
       voterZone: worker.voterZone || '',
       voterSection: worker.voterSection || '',
@@ -633,7 +633,7 @@ export const TrabalhadoresView: React.FC = () => {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <img
-                      src={w.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                      src={w.avatar || DEFAULT_AVATAR}
                       alt={w.name}
                       className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shadow-2xs shrink-0"
                     />
@@ -737,7 +737,7 @@ export const TrabalhadoresView: React.FC = () => {
                     <td className="px-3.5 py-3 truncate">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <img
-                          src={w.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                          src={w.avatar || DEFAULT_AVATAR}
                           alt={w.name}
                           className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
                         />
@@ -897,7 +897,7 @@ export const TrabalhadoresView: React.FC = () => {
                     <div className="flex items-center gap-3.5">
                       <div className="relative shrink-0">
                         <img 
-                          src={formData.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'} 
+                          src={formData.avatar || DEFAULT_AVATAR} 
                           alt="Foto" 
                           className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
                         />
@@ -1569,7 +1569,7 @@ export const TrabalhadoresView: React.FC = () => {
             <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white rounded-t-3xl sm:rounded-t-2xl">
               <div className="flex items-center gap-3">
                 <img
-                  src={viewingWorker.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                  src={viewingWorker.avatar || DEFAULT_AVATAR}
                   alt={viewingWorker.name}
                   className="w-12 h-12 rounded-2xl object-cover border-2 border-emerald-400"
                 />

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useApp, getRoleLabel } from '../../context/AppContext';
 import { User, UserRole } from '../../types';
+import { DEFAULT_AVATAR } from '../../utils/formatters';
 import { 
   UserCheck, 
   PlusCircle, 
@@ -172,7 +173,7 @@ export const UsuariosView: React.FC = () => {
       phone: phone.trim() || '(11) 90000-0000',
       managerId: role === 'coordenador' ? managerId : undefined,
       active: true,
-      avatar: avatarUrl.trim() || `https://images.unsplash.com/photo-${1520000000000 + Math.floor(Math.random() * 100000)}?w=150&auto=format&fit=crop&q=80`
+      avatar: avatarUrl.trim() || DEFAULT_AVATAR
     });
 
     setIsAddUserOpen(false);
@@ -350,7 +351,7 @@ export const UsuariosView: React.FC = () => {
             >
               <div className="flex items-start gap-3">
                 <img
-                  src={u.avatar}
+                  src={u.avatar || DEFAULT_AVATAR}
                   alt={u.name}
                   className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0"
                 />
@@ -448,7 +449,7 @@ export const UsuariosView: React.FC = () => {
                   <td className="px-3.5 py-3 truncate">
                     <div className="flex items-center gap-2 min-w-0">
                       <img
-                        src={u.avatar}
+                        src={u.avatar || DEFAULT_AVATAR}
                         alt={u.name}
                         className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
                       />
@@ -580,7 +581,7 @@ export const UsuariosView: React.FC = () => {
               {/* Photo Upload from Gallery / Camera */}
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-3">
                 <img 
-                  src={avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'} 
+                  src={avatarUrl || DEFAULT_AVATAR}
                   alt="Avatar" 
                   className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-xs shrink-0" 
                 />
@@ -976,7 +977,7 @@ export const UsuariosView: React.FC = () => {
             {/* Target User Info Card */}
             <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3">
               <img
-                src={passwordResetUser.avatar}
+                src={passwordResetUser.avatar || DEFAULT_AVATAR}
                 alt={passwordResetUser.name}
                 className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0"
               />

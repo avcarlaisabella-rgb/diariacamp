@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatMoney } from '../../utils/formatters';
+import { formatMoney, DEFAULT_AVATAR } from '../../utils/formatters';
 import { 
   X, 
   Calendar, 
@@ -217,7 +217,7 @@ export const NovaDiariaModal: React.FC = () => {
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img
-                      src={w.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                      src={w.avatar || DEFAULT_AVATAR}
                       alt={w.name}
                       className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
                     />

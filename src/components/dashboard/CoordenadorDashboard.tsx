@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { formatMoney, formatDate } from '../../utils/formatters';
+import { formatMoney, formatDate, DEFAULT_AVATAR } from '../../utils/formatters';
 import { DashboardDateFilter } from './DashboardDateFilter';
 import { 
   Users, 
@@ -249,7 +249,7 @@ export const CoordenadorDashboard: React.FC = () => {
                   <div key={worker.id} className="p-3.5 sm:p-4 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <img
-                        src={worker.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100'}
+                        src={worker.avatar || DEFAULT_AVATAR}
                         alt={worker.name}
                         className="w-11 h-11 rounded-xl object-cover border border-slate-200 shrink-0"
                       />

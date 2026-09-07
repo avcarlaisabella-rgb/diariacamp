@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { DailyRecord, Worker, WorkerAbsence, User } from '../../types';
-import { formatMoney } from '../../utils/formatters';
+import { formatMoney, DEFAULT_AVATAR } from '../../utils/formatters';
 import { 
   Search, 
   Calendar, 
@@ -532,7 +532,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                     >
                       <div className="relative shrink-0">
                         <img
-                          src={group.coordinatorUser?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120'}
+                          src={group.coordinatorUser?.avatar || DEFAULT_AVATAR}
                           alt={group.coordinatorName}
                           className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/50 group-hover/coord:border-blue-500 transition-colors"
                         />
@@ -656,7 +656,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                               {/* Worker Details */}
                               <div className="flex items-center gap-2.5 min-w-0">
                                 <img
-                                  src={w.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120'}
+                                  src={w.avatar || DEFAULT_AVATAR}
                                   alt={w.name}
                                   className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0"
                                 />
@@ -885,7 +885,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-2.5">
                     <img
-                      src={group.coordinatorUser?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120'}
+                      src={group.coordinatorUser?.avatar || DEFAULT_AVATAR}
                       alt={group.coordinatorName}
                       className="w-8 h-8 rounded-full object-cover border border-slate-300"
                     />
@@ -921,7 +921,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2">
                             <img
-                              src={worker.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120'}
+                              src={worker.avatar || DEFAULT_AVATAR}
                               alt={worker.name}
                               className="w-7 h-7 rounded-full object-cover border border-slate-200"
                             />
@@ -1006,7 +1006,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                             <td className="px-4 py-2.5">
                               <div className="flex items-center gap-2 min-w-0">
                                 <img
-                                  src={worker.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120'}
+                                  src={worker.avatar || DEFAULT_AVATAR}
                                   alt={worker.name}
                                   className="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0"
                                 />

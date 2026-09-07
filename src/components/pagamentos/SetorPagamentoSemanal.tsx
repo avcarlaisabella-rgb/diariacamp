@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { DailyRecord, Worker, FinancialPayment, PaymentMethod } from '../../types';
-import { formatMoney, formatDate, maskPixKey, maskCpf, exportToCsv } from '../../utils/formatters';
+import { formatMoney, formatDate, maskPixKey, maskCpf, exportToCsv, DEFAULT_AVATAR } from '../../utils/formatters';
 import { ReciboAssinaturaModal } from '../financeiro/ReciboAssinaturaModal';
 import { 
   ChevronLeft, 
@@ -846,7 +846,7 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
                           />
                         )}
                         <img 
-                          src={item.worker.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'} 
+                          src={item.worker.avatar || DEFAULT_AVATAR} 
                           alt={item.worker.name} 
                           className="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0" 
                         />
@@ -1042,7 +1042,7 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <img
-                      src={item.worker.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                      src={item.worker.avatar || DEFAULT_AVATAR}
                       alt={item.worker.name}
                       className="w-9 h-9 rounded-full object-cover border border-slate-200"
                     />

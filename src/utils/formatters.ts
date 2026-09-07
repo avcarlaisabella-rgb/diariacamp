@@ -1,3 +1,17 @@
+/**
+ * Avatar neutro padrão (SVG embutido, sem depender de nenhuma URL externa).
+ * Usado sempre que não há foto cadastrada, evitando ícones de imagem quebrada.
+ */
+export const DEFAULT_AVATAR =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+      <rect width="120" height="120" fill="#e2e8f0"/>
+      <circle cx="60" cy="46" r="22" fill="#94a3b8"/>
+      <path d="M60 76c-25 0-44 15-44 33v11h88v-11c0-18-19-33-44-33z" fill="#94a3b8"/>
+    </svg>`
+  );
+
 export const formatMoney = (val: number): string => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
