@@ -45,37 +45,37 @@ export const Header: React.FC = () => {
 
       {/* Main Header (App Top Bar) */}
       <header id="main-app-header" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between">
-          
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 h-14 flex items-center justify-between gap-1.5">
+
           {/* Logo and Brand */}
-          <div className="flex items-center gap-2">
-            <button 
+          <div className="flex items-center min-w-0 flex-1">
+            <button
               onClick={() => setCurrentTab('dashboard')}
-              className="flex items-center gap-2 text-left focus:outline-none group cursor-pointer active:scale-95 transition-transform"
+              className="flex items-center gap-1.5 sm:gap-2 text-left focus:outline-none group cursor-pointer active:scale-95 transition-transform min-w-0"
             >
-              <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs group-hover:bg-slate-800 transition-colors">
-                <Shield className="w-4 h-4 text-emerald-400" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs group-hover:bg-slate-800 transition-colors shrink-0">
+                <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
               </div>
-              <div className="text-base font-black tracking-tight text-slate-900 leading-tight flex items-center gap-1.5">
-                <span>Gestão de Campanha</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+              <div className="text-xs sm:text-base font-black tracking-tight text-slate-900 leading-tight flex items-center gap-1 sm:gap-1.5 min-w-0">
+                <span className="truncate">Gestão de Campanha</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block shrink-0" />
               </div>
             </button>
           </div>
 
           {/* Center / Action Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Quick Role Switcher Pill */}
             <div className="relative">
               <button
                 id="role-switcher-btn"
                 onClick={() => setShowRoleMenu(!showRoleMenu)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold cursor-pointer transition-all active:scale-95 ${roleColors[currentUser.role].badge}`}
+                className={`flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-full border text-[9px] sm:text-[11px] font-bold cursor-pointer transition-all active:scale-95 whitespace-nowrap ${roleColors[currentUser.role].badge}`}
                 title="Alternar perfil"
               >
-                <ArrowLeftRight className="w-3 h-3 opacity-70" />
+                <ArrowLeftRight className="w-3 h-3 opacity-70 hidden sm:inline" />
                 <span>{getRoleLabel(currentUser.role)}</span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
+                <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
               </button>
 
               {/* Role Dropdown */}
@@ -126,7 +126,7 @@ export const Header: React.FC = () => {
             <button
               id="header-profile-btn"
               onClick={() => setCurrentTab('perfil')}
-              className={`p-0.5 rounded-full border-2 transition-all cursor-pointer active:scale-95 ${currentTab === 'perfil' ? 'border-emerald-600 ring-2 ring-emerald-100' : 'border-slate-200 hover:border-slate-400'}`}
+              className={`p-0.5 rounded-full border-2 transition-all cursor-pointer active:scale-95 shrink-0 ${currentTab === 'perfil' ? 'border-emerald-600 ring-2 ring-emerald-100' : 'border-slate-200 hover:border-slate-400'}`}
               title="Meu Perfil"
             >
               <img
