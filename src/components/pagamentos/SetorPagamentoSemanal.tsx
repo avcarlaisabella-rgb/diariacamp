@@ -118,7 +118,8 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
   // Copied PIX feedback state: workerId -> boolean
   const [copiedPixWorkerId, setCopiedPixWorkerId] = useState<string | null>(null);
 
-  // 1. Calculate the 7 days of the selected week (Monday to Sunday)
+  // 1. Calculate the 5 days of the selected work week (Monday to Friday —
+  // trabalho não é realizado no fim de semana)
   const weekInfo = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() + (weekOffset * 7));
@@ -128,8 +129,8 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
     const monday = new Date(d.setDate(diff));
 
     const days = [];
-    const dayNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-    for (let i = 0; i < 7; i++) {
+    const dayNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
+    for (let i = 0; i < 5; i++) {
       const current = new Date(monday);
       current.setDate(monday.getDate() + i);
       const dateStr = current.toISOString().split('T')[0];
@@ -143,7 +144,7 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
     }
 
     const startStr = days[0].dayMonth;
-    const endStr = days[6].dayMonth;
+    const endStr = days[4].dayMonth;
     return {
       monday,
       days,
@@ -887,7 +888,7 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
                       </div>
                     </td>
 
-                    {/* 7 Days Attendance Pills */}
+                    {/* Days Attendance Pills (Seg-Sex) */}
                     <td className="px-2 py-2.5 text-center">
                       <div className="inline-flex items-center gap-0.5 justify-center">
                         {item.daysStatus.map(day => (
@@ -1080,8 +1081,8 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
                   </div>
                 </div>
 
-                {/* 7 Days Attendance Grid */}
-                <div className="grid grid-cols-7 gap-1 text-center">
+                {/* Days Attendance Grid (Seg-Sex) */}
+                <div className="grid grid-cols-5 gap-1 text-center">
                   {item.daysStatus.map(day => (
                     <div
                       key={day.dateStr}

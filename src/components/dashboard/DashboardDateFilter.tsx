@@ -51,14 +51,14 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
     const yesterdayStr = toISO(yesterday);
     if (startDate === yesterdayStr && endDate === yesterdayStr) return 'ontem';
 
-    // This week (Monday to Sunday)
+    // This week (Monday to Friday — trabalho não é realizado no fim de semana)
     const day = now.getDay();
     const diffToMonday = (day === 0 ? -6 : 1) - day;
     const mon = new Date(now);
     mon.setDate(now.getDate() + diffToMonday);
-    const sun = new Date(mon);
-    sun.setDate(mon.getDate() + 6);
-    if (startDate === toISO(mon) && endDate === toISO(sun)) return 'esta-semana';
+    const fri = new Date(mon);
+    fri.setDate(mon.getDate() + 4);
+    if (startDate === toISO(mon) && endDate === toISO(fri)) return 'esta-semana';
 
     // This month
     const firstDayMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -97,9 +97,9 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
       const diffToMonday = (day === 0 ? -6 : 1) - day;
       const mon = new Date(now);
       mon.setDate(now.getDate() + diffToMonday);
-      const sun = new Date(mon);
-      sun.setDate(mon.getDate() + 6);
-      onDateChange(toISO(mon), toISO(sun), 'esta-semana');
+      const fri = new Date(mon);
+      fri.setDate(mon.getDate() + 4);
+      onDateChange(toISO(mon), toISO(fri), 'esta-semana');
       return;
     }
 
@@ -110,9 +110,9 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
       thisMon.setDate(now.getDate() + diffToMonday);
       const lastMon = new Date(thisMon);
       lastMon.setDate(thisMon.getDate() - 7);
-      const lastSun = new Date(lastMon);
-      lastSun.setDate(lastMon.getDate() + 6);
-      onDateChange(toISO(lastMon), toISO(lastSun), 'semana-passada');
+      const lastFri = new Date(lastMon);
+      lastFri.setDate(lastMon.getDate() + 4);
+      onDateChange(toISO(lastMon), toISO(lastFri), 'semana-passada');
       return;
     }
 

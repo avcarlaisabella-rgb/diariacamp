@@ -37,10 +37,11 @@ function getWeekInfo(offsetWeeks: number = 0) {
   monday.setDate(diffToMonday);
   monday.setHours(0, 0, 0, 0);
 
+  // Semana de trabalho: segunda a sexta (trabalho não é realizado no fim de semana)
   const days: { dateStr: string; dayLabel: string; dayMonth: string }[] = [];
-  const dayLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+  const dayLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 5; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     const dateStr = d.toISOString().split('T')[0];
@@ -52,13 +53,13 @@ function getWeekInfo(offsetWeeks: number = 0) {
     });
   }
 
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
+  const friday = new Date(monday);
+  friday.setDate(monday.getDate() + 4);
 
   return {
     start: days[0].dateStr,
-    end: days[6].dateStr,
-    formattedLabel: `${days[0].dayMonth} a ${days[6].dayMonth}/${sunday.getFullYear()}`,
+    end: days[4].dateStr,
+    formattedLabel: `${days[0].dayMonth} a ${days[4].dayMonth}/${friday.getFullYear()}`,
     days
   };
 }
@@ -935,8 +936,8 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                           </div>
                         </div>
 
-                        {/* 7 Days pills */}
-                        <div className="grid grid-cols-7 gap-1 text-center text-[10px]">
+                        {/* Days pills (Seg-Sex) */}
+                        <div className="grid grid-cols-5 gap-1 text-center text-[10px]">
                           {daysStatus.map(d => (
                             <div
                               key={d.dateStr}
@@ -1017,7 +1018,7 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
                             </td>
 
                             <td className="px-3 py-2.5 text-center">
-                              <div className="grid grid-cols-7 gap-1 max-w-[210px] mx-auto">
+                              <div className="grid grid-cols-5 gap-1 max-w-[150px] mx-auto">
                                 {daysStatus.map(d => (
                                   <div
                                     key={d.dateStr}
