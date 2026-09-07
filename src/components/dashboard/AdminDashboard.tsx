@@ -147,7 +147,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Trabalhadores
+              Total de Trabalhadores
             </span>
             <div className="p-2 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-105 transition-transform">
               <Users className="w-4 h-4" />
@@ -172,7 +172,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              {hasDateFilter ? 'Diárias no Período' : 'Lançadas Hoje'}
+              {hasDateFilter ? 'Diárias no Período' : 'Em Campo'}
             </span>
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-105 transition-transform">
               <Calendar className="w-4 h-4" />
@@ -193,7 +193,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Liberação
+              Cadastro para Aprovar
             </span>
             <div className="p-2 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-105 transition-transform">
               <Hourglass className="w-4 h-4" />
@@ -204,27 +204,6 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div className="text-[11px] text-amber-700/80 mt-1 font-medium truncate">
             Aguardando para trabalhar
-          </div>
-        </div>
-
-        {/* Card 4: Diárias aprovadas no período */}
-        <div 
-          onClick={() => setCurrentTab('pagamentos')}
-          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:border-emerald-300 transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Aprovadas
-            </span>
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-105 transition-transform">
-              <CheckCircle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-emerald-600">
-            {diariasAprovadas}
-          </div>
-          <div className="text-[11px] text-emerald-700/80 mt-1 font-medium truncate">
-            {hasDateFilter ? 'Aprovadas no período' : 'Prontas para pagamento'}
           </div>
         </div>
 
@@ -265,9 +244,11 @@ export const AdminDashboard: React.FC = () => {
           <div className="text-xl sm:text-2xl font-black text-emerald-700 truncate">
             {formatMoney(valorPago)}
           </div>
-          <div className="text-[11px] text-emerald-600 mt-1 font-medium truncate">
-            {hasDateFilter ? 'Liquidado no período' : 'Quitado via PIX/Caixa'}
-          </div>
+          {hasDateFilter && (
+            <div className="text-[11px] text-emerald-600 mt-1 font-medium truncate">
+              Liquidado no período
+            </div>
+          )}
         </div>
 
         {/* Card 7: Total geral de diárias no período */}
@@ -277,10 +258,10 @@ export const AdminDashboard: React.FC = () => {
         >
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              {hasDateFilter ? 'Total de Diárias no Período' : 'Total Geral de Diárias'}
+              {hasDateFilter ? 'Total de Dias no Período' : 'Total Geral de Dias'}
             </span>
             <div className="text-2xl sm:text-3xl font-black text-white mt-1">
-              {totalGeralDiarias} diárias
+              {totalGeralDiarias} dias
             </div>
             <div className="text-xs text-emerald-400 mt-1 font-medium">
               {hasDateFilter ? 'Total apurado no intervalo de datas selecionado' : 'Histórico completo de lançamentos'}
