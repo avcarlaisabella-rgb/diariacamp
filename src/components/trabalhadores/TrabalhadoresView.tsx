@@ -311,6 +311,13 @@ export const TrabalhadoresView: React.FC = () => {
         setFormError('Informe o WhatsApp/Telefone.');
         return;
       }
+      const duplicateByCpf = findDuplicateWorker(formData.cpf, '', editingWorkerId || undefined);
+      if (duplicateByCpf) {
+        setFormError(
+          `Este CPF já está cadastrado na equipe de "${duplicateByCpf.coordinatorName}" (${duplicateByCpf.teamZone}), com o nome "${duplicateByCpf.name}". Não é permitido cadastrar a mesma pessoa em mais de uma equipe.`
+        );
+        return;
+      }
       setCurrentStep(2);
     } else if (currentStep === 2) {
       // Electoral data (optional or validate format if filled)
@@ -361,6 +368,23 @@ export const TrabalhadoresView: React.FC = () => {
     setDeletingWorker(null);
   };
 
+  // Impede que o mesmo trabalhador (mesmo CPF ou mesmo título de eleitor)
+  // seja cadastrado em mais de uma equipe. Retorna o cadastro já existente,
+  // se houver, cruzando CPF e dados eleitorais.
+  const onlyDigits = (v?: string) => (v || '').replace(/\D/g, '');
+
+  const findDuplicateWorker = (cpf: string, voterRegistration: string, excludeId?: string): Worker | null => {
+    const cpfDigits = onlyDigits(cpf);
+    const voterDigits = onlyDigits(voterRegistration);
+
+    return workers.find(w => {
+      if (excludeId && w.id === excludeId) return false;
+      const sameCpf = cpfDigits.length > 0 && onlyDigits(w.cpf) === cpfDigits;
+      const sameVoter = voterDigits.length > 0 && onlyDigits(w.voterRegistration) === voterDigits;
+      return sameCpf || sameVoter;
+    }) || null;
+  };
+
   // Submit Final Form
   const handleSaveWorker = (e: React.FormEvent) => {
     e.preventDefault();
@@ -368,6 +392,14 @@ export const TrabalhadoresView: React.FC = () => {
 
     if (formData.preferredPaymentMethod === 'PIX' && !formData.pixKey.trim()) {
       setFormError('Informe a chave PIX.');
+      return;
+    }
+
+    const duplicate = findDuplicateWorker(formData.cpf, formData.voterRegistration, editingWorkerId || undefined);
+    if (duplicate) {
+      setFormError(
+        `Este trabalhador já está cadastrado na equipe de "${duplicate.coordinatorName}" (${duplicate.teamZone}), com o nome "${duplicate.name}". Não é permitido cadastrar a mesma pessoa em mais de uma equipe.`
+      );
       return;
     }
 
