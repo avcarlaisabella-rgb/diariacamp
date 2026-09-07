@@ -290,19 +290,6 @@ export const TrabalhadoresView: React.FC = () => {
     }
   };
 
-  const handleVoterDocUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setFormData(prev => ({ ...prev, voterDocumentPhoto: event.target?.result as string }));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   // Step Validation & Transition
   const handleNextStep = () => {
     setFormError('');
@@ -1249,50 +1236,6 @@ export const TrabalhadoresView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Foto do Título ou Documento (Galeria) */}
-                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                      Foto do Título ou Documento (Upload da Galeria / Câmera)
-                    </label>
-                    <div className="flex items-center gap-3">
-                      {formData.voterDocumentPhoto && (
-                        <div className="relative shrink-0">
-                          <img 
-                            src={formData.voterDocumentPhoto} 
-                            alt="Documento" 
-                            className="w-16 h-16 rounded-xl object-cover border border-slate-300 shadow-xs"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, voterDocumentPhoto: '' }))}
-                            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow"
-                            title="Remover anexo"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      )}
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="file"
-                          id="worker-voter-doc-upload"
-                          accept="image/*"
-                          onChange={handleVoterDocUpload}
-                          className="hidden"
-                        />
-                        <label
-                          htmlFor="worker-voter-doc-upload"
-                          className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 rounded-xl text-xs font-bold cursor-pointer shadow-xs transition-colors"
-                        >
-                          <Camera className="w-4 h-4 text-blue-600 shrink-0" />
-                          <span>{formData.voterDocumentPhoto ? 'Alterar Foto do Documento' : 'Escolher Foto da Galeria / Câmera'}</span>
-                        </label>
-                        <p className="text-[10px] text-slate-400">
-                          Fotografe o título de eleitor ou documento oficial com foto.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
 
@@ -1663,16 +1606,6 @@ export const TrabalhadoresView: React.FC = () => {
                     <span className="text-slate-400 block text-[10px]">Município Eleitoral:</span>
                     <strong className="text-slate-900">{viewingWorker.voterCity || viewingWorker.city || 'São Paulo'}/{viewingWorker.voterState || viewingWorker.state || 'SP'}</strong>
                   </div>
-                  {viewingWorker.voterDocumentPhoto && (
-                    <div className="col-span-3 pt-2">
-                      <span className="text-slate-400 block text-[10px] mb-1">Foto do Documento/Título Anexo:</span>
-                      <img 
-                        src={viewingWorker.voterDocumentPhoto} 
-                        alt="Documento Eleitoral" 
-                        className="w-full max-h-48 rounded-xl object-contain bg-slate-900/5 border border-slate-200"
-                      />
-                    </div>
-                  )}
                 </div>
               </div>
 
