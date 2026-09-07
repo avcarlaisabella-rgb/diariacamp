@@ -2,16 +2,16 @@
 
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Worker, WorkerRole, PaymentMethod, DEFAULT_ROLE_RATES } from '../../types';
+import { Worker, WorkerRole, PaymentMethod } from '../../types';
 import { formatMoney } from '../../utils/formatters';
-import { 
-  Users, 
-  Search, 
-  PlusCircle, 
-  Phone, 
-  MapPin, 
-  X, 
-  CheckCircle2, 
+import {
+  Users,
+  Search,
+  PlusCircle,
+  Phone,
+  MapPin,
+  X,
+  CheckCircle2,
   AlertCircle,
   Eye,
   Edit3,
@@ -26,35 +26,32 @@ import {
   Building2,
   Calendar,
   Camera,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Settings,
+  Trash2
 } from 'lucide-react';
 
 const BRAZIL_STATES = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 
-  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+  'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
   'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
-];
-
-const WORKER_ROLES: WorkerRole[] = [
-  'Panfletagem',
-  'Bandeirada',
-  'Carro de Som',
-  'Mobilizador',
-  'Fiscal de Campanha',
-  'Apoio Logístico',
-  'Cabo Eleitoral'
 ];
 
 export const TrabalhadoresView: React.FC = () => {
   const { 
-    currentUser, 
-    workers, 
-    users, 
-    addWorker, 
+    currentUser,
+    workers,
+    users,
+    addWorker,
     updateWorker,
     toggleWorkerActive,
-    updateWorkerStatus 
+    updateWorkerStatus,
+    workerRoles,
+    addWorkerRole,
+    removeWorkerRole
   } = useApp();
+
+  const canManageRoles = currentUser?.role === 'admin' || currentUser?.role === 'gestor';
 
   // Filters and Search State
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,6 +65,12 @@ export const TrabalhadoresView: React.FC = () => {
   const [editingWorkerId, setEditingWorkerId] = useState<string | null>(null);
   const [viewingWorker, setViewingWorker] = useState<Worker | null>(null);
 
+  // Gerenciar Funções (Admin/Gestor)
+  const [isRolesModalOpen, setIsRolesModalOpen] = useState(false);
+  const [newRoleName, setNewRoleName] = useState('');
+  const [newRoleRate, setNewRoleRate] = useState('80');
+  const [rolesError, setRolesError] = useState('');
+
   // 3-Step Form State
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [formError, setFormError] = useState<string>('');
@@ -80,7 +83,7 @@ export const TrabalhadoresView: React.FC = () => {
     phone: '',
     city: 'São Paulo',
     state: 'SP',
-    role: 'Panfletagem' as WorkerRole,
+    role: 'Panfletagem',
     teamZone: 'Zona Norte - Santana',
     coordinatorId: 'usr_coord1',
     managerId: 'usr_gestor',
@@ -190,7 +193,7 @@ export const TrabalhadoresView: React.FC = () => {
       phone: '',
       city: 'São Paulo',
       state: 'SP',
-      role: 'Panfletagem',
+      role: workerRoles[0]?.name || 'Panfletagem',
       teamZone: defaultCoord?.teamZone || 'Zona Norte - Santana',
       coordinatorId: defaultCoord?.id || 'usr_coord1',
       managerId: defaultCoord?.managerId || 'usr_gestor',
@@ -212,7 +215,7 @@ export const TrabalhadoresView: React.FC = () => {
       bankAgency: '',
       bankAccount: '',
       bankAccountType: 'Corrente',
-      standardRate: DEFAULT_ROLE_RATES['Panfletagem'] || 80.00
+      standardRate: workerRoles[0]?.defaultRate || 80.00
     });
     setIsFormOpen(true);
   };
@@ -311,12 +314,34 @@ export const TrabalhadoresView: React.FC = () => {
   };
 
   const handleRoleChange = (role: WorkerRole) => {
-    const rate = DEFAULT_ROLE_RATES[role] || 80.00;
+    const rate = workerRoles.find(r => r.name === role)?.defaultRate || 80.00;
     setFormData(prev => ({
       ...prev,
       role,
       standardRate: rate
     }));
+  };
+
+  // Gerenciar Funções (Admin/Gestor)
+  const handleAddRole = (e: React.FormEvent) => {
+    e.preventDefault();
+    setRolesError('');
+    const rate = parseFloat(newRoleRate.replace(',', '.'));
+    const result = addWorkerRole(newRoleName, isNaN(rate) ? 80 : rate);
+    if (!result.ok) {
+      setRolesError(result.error || 'Não foi possível adicionar a função.');
+      return;
+    }
+    setNewRoleName('');
+    setNewRoleRate('80');
+  };
+
+  const handleRemoveRole = (id: string) => {
+    setRolesError('');
+    const result = removeWorkerRole(id);
+    if (!result.ok) {
+      setRolesError(result.error || 'Não foi possível remover a função.');
+    }
   };
 
   // Submit Final Form
@@ -394,14 +419,26 @@ export const TrabalhadoresView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          id="btn-cadastrar-trabalhador"
-          onClick={handleOpenAdd}
-          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <PlusCircle className="w-4 h-4 text-emerald-400" />
-          <span>Novo Trabalhador</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {canManageRoles && (
+            <button
+              id="btn-gerenciar-funcoes"
+              onClick={() => setIsRolesModalOpen(true)}
+              className="px-3.5 py-2 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 font-bold rounded-xl text-xs sm:text-sm shadow-xs border border-slate-200 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Settings className="w-4 h-4 text-slate-500" />
+              <span>Funções</span>
+            </button>
+          )}
+          <button
+            id="btn-cadastrar-trabalhador"
+            onClick={handleOpenAdd}
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4 text-emerald-400" />
+            <span>Novo Trabalhador</span>
+          </button>
+        </div>
       </div>
 
       {/* Filters and Search Bar */}
@@ -927,17 +964,28 @@ export const TrabalhadoresView: React.FC = () => {
 
                   {/* Função na Campanha */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase text-slate-700 mb-1" htmlFor="inp-worker-role">
-                      Função na Campanha *
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[11px] font-bold uppercase text-slate-700" htmlFor="inp-worker-role">
+                        Função na Campanha *
+                      </label>
+                      {canManageRoles && (
+                        <button
+                          type="button"
+                          onClick={() => setIsRolesModalOpen(true)}
+                          className="text-[10px] font-bold text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        >
+                          Gerenciar funções
+                        </button>
+                      )}
+                    </div>
                     <select
                       id="inp-worker-role"
                       value={formData.role}
                       onChange={(e) => handleRoleChange(e.target.value as WorkerRole)}
                       className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white font-semibold"
                     >
-                      {WORKER_ROLES.map(r => (
-                        <option key={r} value={r}>{r} (Diária padrão: {formatMoney(DEFAULT_ROLE_RATES[r] || 80)})</option>
+                      {workerRoles.map(r => (
+                        <option key={r.id} value={r.name}>{r.name} (Diária padrão: {formatMoney(r.defaultRate)})</option>
                       ))}
                     </select>
                   </div>
@@ -1590,6 +1638,101 @@ export const TrabalhadoresView: React.FC = () => {
                   <Power className="w-3.5 h-3.5" />
                   <span>{viewingWorker.status === 'Inativo' ? 'Ativar Trabalhador' : 'Desativar Trabalhador'}</span>
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gerenciar Funções de Trabalhador (Admin/Gestor) */}
+      {isRolesModalOpen && canManageRoles && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 animate-in fade-in zoom-in duration-200 max-h-[85vh] flex flex-col">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-slate-500" />
+                  <span>Funções de Trabalhador</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">Adicione ou remova funções e suas diárias padrão.</p>
+              </div>
+              <button
+                onClick={() => { setIsRolesModalOpen(false); setRolesError(''); }}
+                className="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer active:scale-95"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-5 flex-1 overflow-y-auto space-y-4">
+              {rolesError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-800 text-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span>{rolesError}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleAddRole} className="flex items-end gap-2">
+                <div className="flex-1">
+                  <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1" htmlFor="new-role-name">
+                    Nova função
+                  </label>
+                  <input
+                    id="new-role-name"
+                    type="text"
+                    value={newRoleName}
+                    onChange={(e) => setNewRoleName(e.target.value)}
+                    placeholder="Ex: Segurança"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white"
+                  />
+                </div>
+                <div className="w-28">
+                  <label className="block text-[10px] font-bold uppercase text-slate-600 mb-1" htmlFor="new-role-rate">
+                    Diária (R$)
+                  </label>
+                  <input
+                    id="new-role-rate"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={newRoleRate}
+                    onChange={(e) => setNewRoleRate(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shrink-0 cursor-pointer"
+                  title="Adicionar função"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                </button>
+              </form>
+
+              <div className="space-y-1.5 pt-2 border-t border-slate-100">
+                {workerRoles.length === 0 ? (
+                  <div className="text-center text-slate-400 text-xs py-4">Nenhuma função cadastrada.</div>
+                ) : (
+                  workerRoles.map(role => {
+                    const inUse = workers.some(w => w.role === role.name);
+                    return (
+                      <div key={role.id} className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
+                        <div>
+                          <div className="text-xs font-bold text-slate-900">{role.name}</div>
+                          <div className="text-[11px] text-slate-500">Diária padrão: {formatMoney(role.defaultRate)}</div>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveRole(role.id)}
+                          disabled={inUse}
+                          title={inUse ? 'Em uso por trabalhadores cadastrados' : 'Remover função'}
+                          className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg cursor-pointer disabled:text-slate-300 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

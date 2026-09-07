@@ -36,6 +36,19 @@ model User {
 }
 
 // ------------------------------------------------------------------
+// Funções de trabalhador cadastráveis (nome + diária padrão).
+// Gerenciável por Administrador e Gestor na tela de Trabalhadores.
+// ------------------------------------------------------------------
+model WorkerRoleType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  defaultRate Float
+  createdAt   DateTime @default(now())
+
+  @@map("worker_role_types")
+}
+
+// ------------------------------------------------------------------
 // Trabalhadores de campanha
 // ------------------------------------------------------------------
 model Worker {

@@ -14,17 +14,12 @@ export interface User {
   managerName?: string;
 }
 
-export type WorkerRole = 
-  | 'Panfletagem' 
-  | 'Bandeirada' 
-  | 'Carro de Som' 
-  | 'Mobilizador' 
-  | 'Fiscal de Campanha' 
-  | 'Apoio Logístico'
-  | 'Cabo Eleitoral'
-  | 'Motorista';
+// Função do trabalhador: string livre, gerenciável em tempo de execução por
+// Administrador e Gestor (ver AppContext.addWorkerRole/removeWorkerRole).
+// As opções abaixo são apenas o conjunto inicial usado no seed do banco.
+export type WorkerRole = string;
 
-export const DEFAULT_ROLE_RATES: Record<WorkerRole, number> = {
+export const DEFAULT_ROLE_RATES: Record<string, number> = {
   'Apoio Logístico': 100.00,
   'Mobilizador': 120.00,
   'Motorista': 150.00,
@@ -34,6 +29,13 @@ export const DEFAULT_ROLE_RATES: Record<WorkerRole, number> = {
   'Carro de Som': 150.00,
   'Cabo Eleitoral': 100.00,
 };
+
+/** Função de trabalhador cadastrável (nome + diária padrão), persistida no banco. */
+export interface WorkerRoleType {
+  id: string;
+  name: string;
+  defaultRate: number;
+}
 
 export type PaymentMethod = 'PIX' | 'Dinheiro' | 'Transferência';
 

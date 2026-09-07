@@ -14,6 +14,7 @@ import {
   FinancialPayment,
   PaymentMethod,
   PaymentReversal,
+  WorkerRoleType,
 } from '../types';
 import { loginAsRoleAction, logoutAction } from '../app/actions/session';
 import {
@@ -21,6 +22,7 @@ import {
   persistUpdateWorker,
   persistUpdateWorkersMany,
 } from '../app/actions/workers';
+import { persistCreateWorkerRole, persistDeleteWorkerRole } from '../app/actions/workerRoles';
 import {
   persistCreateDiaria,
   persistCreateDiariasBatch,
@@ -83,6 +85,7 @@ export interface BootstrapData {
   paymentBatches: PaymentBatch[];
   financialPayments: FinancialPayment[];
   paymentReversals: PaymentReversal[];
+  workerRoles: WorkerRoleType[];
 }
 
 interface AppContextType {
@@ -94,6 +97,7 @@ interface AppContextType {
   paymentBatches: PaymentBatch[];
   financialPayments: FinancialPayment[];
   paymentReversals: PaymentReversal[];
+  workerRoles: WorkerRoleType[];
   currentTab: NavigationTab;
   setCurrentTab: (tab: NavigationTab) => void;
   isNovaDiariaOpen: boolean;
@@ -124,6 +128,9 @@ interface AppContextType {
   updateWorker: (id: string, data: Partial<Worker>) => void;
   toggleWorkerActive: (id: string) => void;
   updateWorkerStatus: (id: string, status: 'Ativo' | 'Em campo' | 'Inativo') => void;
+  // Funções de Trabalhador (Admin/Gestor)
+  addWorkerRole: (name: string, defaultRate: number) => { ok: boolean; error?: string };
+  removeWorkerRole: (id: string) => { ok: boolean; error?: string };
   // Liberação de Trabalhador para Início de Trabalho (Área de Aprovação)
   liberarWorker: (workerId: string, notes?: string) => void;
   rejeitarWorker: (workerId: string, reason: string) => void;
@@ -157,6 +164,7 @@ export const AppProvider: React.FC<{
   const [paymentBatches, setPaymentBatches] = useState<PaymentBatch[]>(initialData.paymentBatches);
   const [financialPayments, setFinancialPayments] = useState<FinancialPayment[]>(initialData.financialPayments);
   const [paymentReversals, setPaymentReversals] = useState<PaymentReversal[]>(initialData.paymentReversals);
+  const [workerRoles, setWorkerRoles] = useState<WorkerRoleType[]>(initialData.workerRoles);
 
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [isNovaDiariaOpen, setIsNovaDiariaOpen] = useState<boolean>(false);
@@ -1380,6 +1388,44 @@ export const AppProvider: React.FC<{
     showNotification(`Status do trabalhador atualizado para: ${status}`);
   };
 
+  // Funções de Trabalhador (gerenciável por Admin/Gestor)
+  const addWorkerRole = (name: string, defaultRate: number): { ok: boolean; error?: string } => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      return { ok: false, error: 'Informe o nome da função.' };
+    }
+    if (workerRoles.some(r => r.name.toLowerCase() === trimmed.toLowerCase())) {
+      return { ok: false, error: 'Já existe uma função com esse nome.' };
+    }
+    const newRole: WorkerRoleType = {
+      id: `role_${Date.now()}`,
+      name: trimmed,
+      defaultRate: defaultRate > 0 ? defaultRate : 80,
+    };
+    setWorkerRoles(prev => [...prev, newRole].sort((a, b) => a.name.localeCompare(b.name)));
+    sync(persistCreateWorkerRole(newRole));
+    showNotification(`Função "${newRole.name}" adicionada com sucesso!`);
+    return { ok: true };
+  };
+
+  const removeWorkerRole = (id: string): { ok: boolean; error?: string } => {
+    const role = workerRoles.find(r => r.id === id);
+    if (!role) return { ok: false, error: 'Função não encontrada.' };
+
+    const inUse = workers.some(w => w.role === role.name);
+    if (inUse) {
+      return {
+        ok: false,
+        error: `Não é possível excluir "${role.name}": existem trabalhadores cadastrados com essa função.`,
+      };
+    }
+
+    setWorkerRoles(prev => prev.filter(r => r.id !== id));
+    sync(persistDeleteWorkerRole(id));
+    showNotification(`Função "${role.name}" removida com sucesso!`);
+    return { ok: true };
+  };
+
   const updateCurrentUserProfile = (data: { name: string; email: string; avatar: string; password?: string }) => {
     if (!currentUser) return;
     const updated: User = {
@@ -1458,6 +1504,7 @@ export const AppProvider: React.FC<{
         paymentBatches,
         financialPayments,
         paymentReversals,
+        workerRoles,
         currentTab,
         setCurrentTab,
         isNovaDiariaOpen,
@@ -1485,6 +1532,8 @@ export const AppProvider: React.FC<{
         updateWorker,
         toggleWorkerActive,
         updateWorkerStatus,
+        addWorkerRole,
+        removeWorkerRole,
         liberarWorker,
         rejeitarWorker,
         liberarWorkersBatch,

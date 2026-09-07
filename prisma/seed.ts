@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { INITIAL_USERS, INITIAL_WORKERS, getInitialDiarias, INITIAL_FINANCIAL_PAYMENTS } from '../src/data/mockData';
+import { DEFAULT_ROLE_RATES } from '../src/types';
 
 const prisma = new PrismaClient();
 
@@ -28,6 +29,15 @@ async function main() {
     });
   }
   console.log(`  users: ${INITIAL_USERS.length}`);
+
+  for (const [name, defaultRate] of Object.entries(DEFAULT_ROLE_RATES)) {
+    await prisma.workerRoleType.upsert({
+      where: { name },
+      update: {},
+      create: { name, defaultRate },
+    });
+  }
+  console.log(`  worker role types: ${Object.keys(DEFAULT_ROLE_RATES).length}`);
 
   for (const worker of INITIAL_WORKERS) {
     await prisma.worker.upsert({

@@ -7,6 +7,7 @@ import type {
   PaymentBatch,
   FinancialPayment,
   PaymentReversal,
+  WorkerRoleType,
 } from '@/types';
 
 /** Converte uma linha do Prisma (User) para o tipo usado pelo front-end. */
@@ -44,17 +45,27 @@ export async function getBootstrapData(): Promise<{
   paymentBatches: PaymentBatch[];
   financialPayments: FinancialPayment[];
   paymentReversals: PaymentReversal[];
+  workerRoles: WorkerRoleType[];
 }> {
-  const [usersRaw, workers, diariasRaw, absences, paymentBatchesRaw, financialPaymentsRaw, paymentReversalsRaw] =
-    await Promise.all([
-      prisma.user.findMany({ orderBy: { createdAt: 'asc' } }),
-      prisma.worker.findMany({ orderBy: { createdAt: 'desc' } }),
-      prisma.dailyRecord.findMany({ orderBy: { createdAtDb: 'desc' } }),
-      prisma.workerAbsence.findMany({ orderBy: { createdAt: 'desc' } }),
-      prisma.paymentBatch.findMany({ orderBy: { createdAt: 'desc' } }),
-      prisma.financialPayment.findMany({ orderBy: { createdAt: 'desc' } }),
-      prisma.paymentReversal.findMany({ orderBy: { date: 'desc' } }),
-    ]);
+  const [
+    usersRaw,
+    workers,
+    diariasRaw,
+    absences,
+    paymentBatchesRaw,
+    financialPaymentsRaw,
+    paymentReversalsRaw,
+    workerRoles,
+  ] = await Promise.all([
+    prisma.user.findMany({ orderBy: { createdAt: 'asc' } }),
+    prisma.worker.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.dailyRecord.findMany({ orderBy: { createdAtDb: 'desc' } }),
+    prisma.workerAbsence.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.paymentBatch.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.financialPayment.findMany({ orderBy: { createdAt: 'desc' } }),
+    prisma.paymentReversal.findMany({ orderBy: { date: 'desc' } }),
+    prisma.workerRoleType.findMany({ orderBy: { name: 'asc' } }),
+  ]);
 
   const users = usersRaw.map(mapUser);
 
@@ -173,6 +184,7 @@ export async function getBootstrapData(): Promise<{
     paymentBatches,
     financialPayments,
     paymentReversals,
+    workerRoles,
   };
 }
 
