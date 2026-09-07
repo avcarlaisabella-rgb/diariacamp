@@ -54,9 +54,12 @@ export async function persistCreateUser(user: User & { password?: string }): Pro
 
 export async function persistUpdateUser(id: string, data: Partial<User>): Promise<void> {
   await requireSession();
-  const { id: _ignore, password: _ignorePw, ...rest } = data as Partial<User> & { password?: string };
+  const { id: _ignore, password, ...rest } = data as Partial<User> & { password?: string };
   const updateData: Record<string, unknown> = { ...rest };
   if (rest.email) updateData.email = rest.email.toLowerCase().trim();
+  if (password && password.trim()) {
+    updateData.passwordHash = await hashPassword(password.trim());
+  }
   await prisma.user.update({
     where: { id },
     data: updateData as never,

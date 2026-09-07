@@ -212,7 +212,9 @@ export const UsuariosView: React.FC = () => {
       managerId: editRole === 'coordenador' ? editManagerId : undefined,
       avatar: editAvatar.trim() || editingUser.avatar,
       active: editActive,
-      password: editPassword.trim() ? editPassword.trim() : editingUser.password,
+      // Só inclui a senha quando o admin realmente digitou uma nova —
+      // nunca reenvia um valor antigo/local só porque o campo ficou em branco.
+      ...(editPassword.trim() ? { password: editPassword.trim() } : {}),
     });
 
     setEditingUser(null);
