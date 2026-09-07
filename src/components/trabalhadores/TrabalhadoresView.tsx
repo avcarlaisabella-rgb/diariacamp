@@ -76,6 +76,10 @@ export const TrabalhadoresView: React.FC = () => {
   const [deletingWorker, setDeletingWorker] = useState<Worker | null>(null);
   const [deleteError, setDeleteError] = useState('');
 
+  // Verificação imediata de duplicidade (CPF / título de eleitor) por campo
+  const [cpfWarning, setCpfWarning] = useState('');
+  const [voterWarning, setVoterWarning] = useState('');
+
   // 3-Step Form State
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [formError, setFormError] = useState<string>('');
@@ -191,6 +195,8 @@ export const TrabalhadoresView: React.FC = () => {
     setEditingWorkerId(null);
     setCurrentStep(1);
     setFormError('');
+    setCpfWarning('');
+    setVoterWarning('');
     setFormData({
       name: '',
       cpf: '',
@@ -230,6 +236,8 @@ export const TrabalhadoresView: React.FC = () => {
     setEditingWorkerId(worker.id);
     setCurrentStep(1);
     setFormError('');
+    setCpfWarning('');
+    setVoterWarning('');
     setFormData({
       name: worker.name,
       cpf: worker.cpf,
@@ -320,7 +328,13 @@ export const TrabalhadoresView: React.FC = () => {
       }
       setCurrentStep(2);
     } else if (currentStep === 2) {
-      // Electoral data (optional or validate format if filled)
+      const duplicateByVoter = findDuplicateWorker('', formData.voterRegistration, editingWorkerId || undefined);
+      if (duplicateByVoter) {
+        setFormError(
+          `Este título de eleitor já está cadastrado na equipe de "${duplicateByVoter.coordinatorName}" (${duplicateByVoter.teamZone}), com o nome "${duplicateByVoter.name}". Não é permitido cadastrar a mesma pessoa em mais de uma equipe.`
+        );
+        return;
+      }
       setCurrentStep(3);
     }
   };
@@ -954,10 +968,22 @@ export const TrabalhadoresView: React.FC = () => {
                         type="text"
                         required
                         value={formData.cpf}
-                        onChange={(e) => setFormData(prev => ({ ...prev, cpf: e.target.value }))}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData(prev => ({ ...prev, cpf: value }));
+                          const dup = findDuplicateWorker(value, '', editingWorkerId || undefined);
+                          setCpfWarning(
+                            dup ? `Já cadastrado em "${dup.coordinatorName}" (${dup.teamZone}) — ${dup.name}` : ''
+                          );
+                        }}
                         placeholder="000.000.000-00"
-                        className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white"
+                        className={`w-full px-3 py-2.5 bg-slate-50 border rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:bg-white ${
+                          cpfWarning ? 'border-rose-400 focus:ring-rose-500' : 'border-slate-300 focus:ring-slate-900'
+                        }`}
                       />
+                      {cpfWarning && (
+                        <p className="text-[10px] text-rose-600 font-semibold mt-1 leading-snug">{cpfWarning}</p>
+                      )}
                     </div>
 
                     <div>
@@ -1146,10 +1172,22 @@ export const TrabalhadoresView: React.FC = () => {
                       id="inp-worker-voter"
                       type="text"
                       value={formData.voterRegistration}
-                      onChange={(e) => setFormData(prev => ({ ...prev, voterRegistration: e.target.value }))}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormData(prev => ({ ...prev, voterRegistration: value }));
+                        const dup = findDuplicateWorker('', value, editingWorkerId || undefined);
+                        setVoterWarning(
+                          dup ? `Já cadastrado em "${dup.coordinatorName}" (${dup.teamZone}) — ${dup.name}` : ''
+                        );
+                      }}
                       placeholder="Ex: 041289010192"
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white"
+                      className={`w-full px-3 py-2.5 bg-slate-50 border rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:bg-white ${
+                        voterWarning ? 'border-rose-400 focus:ring-rose-500' : 'border-slate-300 focus:ring-slate-900'
+                      }`}
                     />
+                    {voterWarning && (
+                      <p className="text-[10px] text-rose-600 font-semibold mt-1 leading-snug">{voterWarning}</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-2.5">
@@ -1498,7 +1536,8 @@ export const TrabalhadoresView: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleNextStep}
-                    className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                    disabled={(currentStep === 1 && !!cpfWarning) || (currentStep === 2 && !!voterWarning)}
+                    className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center gap-1 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <span>Avançar para {currentStep === 1 ? 'Dados Eleitorais' : 'Pagamento'}</span>
                     <ChevronRight className="w-4 h-4" />
@@ -1506,7 +1545,8 @@ export const TrabalhadoresView: React.FC = () => {
                 ) : (
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                    disabled={!!cpfWarning || !!voterWarning}
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>{editingWorkerId ? 'Salvar Alterações' : 'Concluir Cadastro'}</span>
