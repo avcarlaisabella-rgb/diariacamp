@@ -1,4 +1,5 @@
 import { User, Worker, DailyRecord } from '../types';
+import { DEFAULT_AVATAR } from '../utils/formatters';
 
 export const INITIAL_USERS: User[] = [
   {
@@ -7,7 +8,7 @@ export const INITIAL_USERS: User[] = [
     email: 'admin@campanha.com.br',
     password: '123',
     role: 'admin',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     teamZone: 'Comitê Central',
     phone: '(11) 98765-4321',
     active: true,
@@ -18,7 +19,7 @@ export const INITIAL_USERS: User[] = [
     email: 'gestor@campanha.com.br',
     password: '123',
     role: 'gestor',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     teamZone: 'Regional Norte / Leste',
     phone: '(11) 97654-3210',
     active: true,
@@ -29,7 +30,7 @@ export const INITIAL_USERS: User[] = [
     email: 'marcos@campanha.com.br',
     password: '123',
     role: 'coordenador',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     teamZone: 'Zona Norte - Santana',
     phone: '(11) 99123-4567',
     active: true,
@@ -42,7 +43,7 @@ export const INITIAL_USERS: User[] = [
     email: 'renata@campanha.com.br',
     password: '123',
     role: 'coordenador',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     teamZone: 'Zona Leste - Tatuapé',
     phone: '(11) 99234-5678',
     active: true,
@@ -54,7 +55,7 @@ export const INITIAL_USERS: User[] = [
 export const INITIAL_WORKERS: Worker[] = [
   {
     id: 'wrk_1',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Ana Beatriz Souza',
     cpf: '345.890.123-01',
     birthDate: '1995-04-12',
@@ -84,7 +85,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_2',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Claudio Roberto Lima',
     cpf: '219.743.882-90',
     birthDate: '1988-11-23',
@@ -112,7 +113,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_3',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Fernanda Martins',
     cpf: '432.118.990-22',
     birthDate: '1992-07-08',
@@ -140,7 +141,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_4',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'José Eduardo Rocha',
     cpf: '112.443.901-55',
     birthDate: '1985-02-17',
@@ -168,7 +169,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_5',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Larissa Gonçalves',
     cpf: '887.654.321-77',
     birthDate: '2001-09-30',
@@ -192,7 +193,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_6',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Rodrigo Pires Barbosa',
     cpf: '556.778.990-11',
     birthDate: '1990-06-15',
@@ -220,7 +221,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_7',
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Camila Nogueira',
     cpf: '776.554.332-99',
     birthDate: '1997-12-05',
@@ -248,7 +249,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_8',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Thiago de Oliveira',
     cpf: '334.221.889-44',
     birthDate: '1986-08-20',
@@ -276,7 +277,7 @@ export const INITIAL_WORKERS: Worker[] = [
   },
   {
     id: 'wrk_9',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&auto=format&fit=crop&q=80',
+    avatar: DEFAULT_AVATAR,
     name: 'Tatiane Cristina Ramos',
     cpf: '998.112.334-00',
     birthDate: '1993-03-10',
