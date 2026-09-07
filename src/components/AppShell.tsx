@@ -72,23 +72,29 @@ export const AppShell: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900 pb-20 lg:pb-8 w-full max-w-full overflow-x-hidden">
+    <div id="app-root-shell" className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900 pb-20 lg:pb-8 w-full max-w-full overflow-x-hidden">
       {/* Header */}
-      <Header />
+      <div className="print:hidden">
+        <Header />
+      </div>
 
       {/* Main Body */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto min-w-0 overflow-x-hidden">
+      <div className="flex-1 flex max-w-7xl w-full mx-auto min-w-0 overflow-x-hidden print:block print:max-w-none">
         {/* Desktop Admin Sidebar */}
-        <Sidebar />
+        <div className="print:hidden">
+          <Sidebar />
+        </div>
 
         {/* Dynamic Screen View */}
-        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 min-w-0 max-w-full overflow-x-hidden">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 min-w-0 max-w-full overflow-x-hidden print:p-0">
           {renderTabContent()}
         </main>
       </div>
 
       {/* Mobile App Bottom Nav Bar */}
-      <MobileNav />
+      <div className="print:hidden">
+        <MobileNav />
+      </div>
     </div>
   );
 };

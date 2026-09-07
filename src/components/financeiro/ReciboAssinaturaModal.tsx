@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { FinancialPayment } from '../../types';
 import { formatMoney, formatDate, maskCpf, maskPixKey } from '../../utils/formatters';
 import { numeroPorExtenso } from '../../utils/numeroPorExtenso';
@@ -57,8 +58,8 @@ PAGADOR: Comitê Financeiro de Campanha
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto print:p-0 print:bg-white print:static">
+  return createPortal(
+    <div className="receipt-print-portal fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto print:p-0 print:bg-white print:static">
       {/* Modal Container */}
       <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[95vh] print:max-h-none print:shadow-none print:border-none print:w-full print:rounded-none">
         
@@ -278,6 +279,7 @@ PAGADOR: Comitê Financeiro de Campanha
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

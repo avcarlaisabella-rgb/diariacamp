@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { DailyRecord } from '../../types';
 import { formatMoney, formatDate, maskCpf } from '../../utils/formatters';
 import { Printer, X, CheckCircle, ShieldCheck } from 'lucide-react';
@@ -55,8 +56,8 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
     window.print();
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+  return createPortal(
+    <div className="receipt-print-portal fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Modal Top Bar (Hidden on print) */}
         <div className="print:hidden p-4 bg-slate-900 text-white flex items-center justify-between">
@@ -195,6 +196,7 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
