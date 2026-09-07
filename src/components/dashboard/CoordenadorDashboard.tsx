@@ -62,12 +62,8 @@ export const CoordenadorDashboard: React.FC = () => {
   // 1. Trabalhadores da sua equipe
   const totalEquipe = equipeTrabalhadores.length;
 
-  // 2. Diárias lançadas no período (ou hoje se sem filtro)
-  const diariasHoje = equipeDiariasBase.filter(d => d.date === today).length;
-  const diariasNoPeriodo = equipeDiarias.length;
-
-  // 3. Diárias pendentes no período
-  const diariasPendentes = equipeDiarias.filter(d => (d.status as string) === 'Pendente').length;
+  // 3. Diárias aguardando aprovação no período
+  const diariasPendentes = equipeDiarias.filter(d => d.status === 'Aguardando aprovação').length;
 
   // 4. Diárias aprovadas no período
   const diariasAprovadas = equipeDiarias.filter(d => d.status === 'Aprovada' || d.status === 'Paga').length;
@@ -133,8 +129,8 @@ export const CoordenadorDashboard: React.FC = () => {
         totalCount={equipeDiariasBase.length}
       />
 
-      {/* 5 Required Coordenador Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* 4 Coordenador Metric Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         
         {/* Card 1: Trabalhadores da sua equipe */}
         <div 
@@ -157,35 +153,14 @@ export const CoordenadorDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: Diárias lançadas hoje ou no período */}
-        <div 
-          onClick={() => setCurrentTab('minhas-diarias')}
-          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all cursor-pointer group"
-        >
-          <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              {hasDateFilter ? 'No Período' : 'Lançadas Hoje'}
-            </span>
-            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-105 transition-transform">
-              <Calendar className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-slate-900">
-            {hasDateFilter ? diariasNoPeriodo : diariasHoje}
-          </div>
-          <div className="text-[11px] text-indigo-600 mt-1 font-medium">
-            {hasDateFilter ? 'Lançadas no período' : 'Diárias do dia'}
-          </div>
-        </div>
-
-        {/* Card 3: Diárias pendentes */}
+        {/* Card 3: Diárias aguardando aprovação */}
         <div 
           onClick={() => setCurrentTab('minhas-diarias')}
           className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs hover:border-amber-300 transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Pendentes
+              Aguardando para Aprovação
             </span>
             <div className="p-2 bg-amber-50 text-amber-600 rounded-xl group-hover:scale-105 transition-transform">
               <Hourglass className="w-4 h-4" />
@@ -221,7 +196,7 @@ export const CoordenadorDashboard: React.FC = () => {
         </div>
 
         {/* Card 5: Total de pessoas trabalhando hoje */}
-        <div className="col-span-2 lg:col-span-1 bg-emerald-600 text-white p-4 rounded-2xl shadow-xs">
+        <div className="bg-emerald-600 text-white p-4 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between text-emerald-100 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">
               Trabalhando Hoje

@@ -211,42 +211,6 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
         <div className="flex flex-wrap items-center gap-1.5">
           <button
             type="button"
-            onClick={() => handleApplyPreset('tudo')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePreset === 'tudo'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-            }`}
-          >
-            Todo o Período
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('hoje')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePreset === 'hoje'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-            }`}
-          >
-            Hoje
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('ontem')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePreset === 'ontem'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-            }`}
-          >
-            Ontem
-          </button>
-
-          <button
-            type="button"
             onClick={() => handleApplyPreset('esta-semana')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activePreset === 'esta-semana'
@@ -254,19 +218,7 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
                 : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
             }`}
           >
-            Esta Semana
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('semana-passada')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePreset === 'semana-passada'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-            }`}
-          >
-            Semana Passada
+            Semana
           </button>
 
           <button
@@ -278,19 +230,7 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
                 : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
             }`}
           >
-            Este Mês
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleApplyPreset('ultimos-30')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activePreset === 'ultimos-30'
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700'
-            }`}
-          >
-            Últimos 30 Dias
+            Mensal
           </button>
         </div>
 
