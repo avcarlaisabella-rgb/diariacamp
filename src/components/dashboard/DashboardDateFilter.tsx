@@ -235,26 +235,26 @@ export const DashboardDateFilter: React.FC<DashboardDateFilterProps> = ({
         </div>
 
         {/* Custom Date Inputs */}
-        <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-start lg:self-auto">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold uppercase text-slate-500 pl-1">De:</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-stretch lg:self-auto w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-[10px] font-bold uppercase text-slate-500 pl-1 shrink-0">De:</span>
             <input
               id="dashboard-filter-start-date"
               type="date"
               value={startDate}
               onChange={(e) => handleStartChange(e.target.value)}
-              className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900 focus:outline-none"
+              className="w-full min-w-0 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900 focus:outline-none"
             />
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold uppercase text-slate-500">Até:</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-[10px] font-bold uppercase text-slate-500 shrink-0">Até:</span>
             <input
               id="dashboard-filter-end-date"
               type="date"
               value={endDate}
               onChange={(e) => handleEndChange(e.target.value)}
-              className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900 focus:outline-none"
+              className="w-full min-w-0 px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900 focus:outline-none"
             />
           </div>
         </div>
