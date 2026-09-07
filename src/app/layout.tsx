@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'Sistema de gestão de pagamento de diárias para trabalhadores em campanha política com perfis de Administrador, Gestor e Coordenador.',
   openGraph: {
-    title: 'DiáriaCamp - Gestão de Diárias de Campanha',
+    title: 'DiáriaCamp - Gestão de Campanha',
     description:
       'Sistema de gestão de pagamento de diárias para trabalhadores em campanha política com perfis de Administrador, Gestor e Coordenador.',
     type: 'website',
