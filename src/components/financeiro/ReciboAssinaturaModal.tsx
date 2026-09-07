@@ -110,9 +110,9 @@ PAGADOR: Comitê Financeiro de Campanha
         </div>
 
         {/* Printable Receipt Paper */}
-        <div 
-          id="recibo-documento" 
-          className="p-6 sm:p-10 overflow-y-auto flex-1 space-y-6 text-slate-800 bg-white font-sans print:p-6 print:space-y-5 print:text-black print:overflow-visible"
+        <div
+          id="recibo-documento"
+          className="print-receipt-area p-6 sm:p-10 overflow-y-auto flex-1 space-y-6 text-slate-800 bg-white font-sans print:p-6 print:space-y-5 print:text-black print:overflow-visible"
         >
           {/* Header of Document */}
           <div className="border-b-2 border-slate-800 pb-4">

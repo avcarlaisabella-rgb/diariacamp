@@ -208,7 +208,7 @@ export const RelatoriosView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-8">
+    <div className="print-receipt-area space-y-6 pb-24 lg:pb-8">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
         <div>

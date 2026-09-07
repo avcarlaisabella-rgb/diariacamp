@@ -82,7 +82,7 @@ export const ReciboModal: React.FC<ReciboModalProps> = ({
         </div>
 
         {/* Printable Receipt Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6 text-slate-800 bg-white" id="printable-receipt">
+        <div className="print-receipt-area p-6 sm:p-8 overflow-y-auto flex-1 space-y-6 text-slate-800 bg-white" id="printable-receipt">
           {/* Receipt Header */}
           <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>

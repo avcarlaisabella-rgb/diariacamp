@@ -33,3 +33,33 @@ html, body {
     scrollbar-width: none;
   }
 }
+
+/*
+ * Impressão de recibos: os modais de recibo marcam seu conteúdo imprimível
+ * com a classe .print-receipt-area. Ao imprimir, escondemos tudo o mais na
+ * página (dashboard, sidebar, etc. por trás do modal) e mostramos só isso,
+ * ocupando a folha inteira — sem isso o navegador imprime a página inteira.
+ */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-receipt-area,
+  .print-receipt-area * {
+    visibility: visible !important;
+  }
+  .print-receipt-area {
+    /* Sem "bottom" de propósito: com top+bottom a altura ficaria presa a
+       uma página, cortando relatórios/recibos com mais de uma folha. */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+}
