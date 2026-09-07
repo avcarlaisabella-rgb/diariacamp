@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 
 export const SESSION_COOKIE = 'diariacamp_session';
@@ -35,12 +35,25 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
   }
 }
 
+/**
+ * Detecta se a requisição atual chegou via HTTPS, olhando o header
+ * `x-forwarded-proto` (setado pelo proxy reverso do Coolify/Traefik) já que,
+ * atrás do proxy, o Next.js só enxerga a conexão interna em HTTP puro.
+ * Sem esse header (ex.: `next dev` local), cai no protocolo da própria requisição.
+ */
+async function isRequestSecure(): Promise<boolean> {
+  const headerList = await headers();
+  const forwardedProto = headerList.get('x-forwarded-proto');
+  if (forwardedProto) return forwardedProto.split(',')[0].trim() === 'https';
+  return false;
+}
+
 export async function setSessionCookie(userId: string): Promise<void> {
   const token = await createSessionToken({ userId });
   const store = await cookies();
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: await isRequestSecure(),
     sameSite: 'lax',
     path: '/',
     maxAge: SESSION_DURATION_SECONDS,
