@@ -5,6 +5,7 @@ const allowedOrigins = new Set([
   'localhost:3000',
   'ymaeujmbzric1jbavalwz8md.2.25.161.231.sslip.io',
   'diariacamp.sisgabthiago.com.br',
+  'gestao.sisgabthiago.com.br',
 ]);
 
 if (process.env.APP_URL) {
