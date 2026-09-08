@@ -337,7 +337,149 @@ export const AprovacoesView: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs">
+        <>
+        {/* MOBILE CARDS */}
+        <div className="sm:hidden space-y-3">
+          {filteredWorkers.map((w) => {
+            const isSelected = selectedIds.includes(w.id);
+            const isPendente = w.approvalStatus === 'Pendente' || w.status === 'Aguardando Liberação' || (w.status as string) === 'Pendente';
+            const isLiberado = w.approvalStatus === 'Liberado' || (!w.approvalStatus && (w.status === 'Ativo' || w.status === 'Em campo' || w.status === 'Faltou'));
+            const isRejeitado = w.approvalStatus === 'Rejeitado';
+
+            return (
+              <div
+                key={w.id}
+                className={`p-3.5 rounded-2xl border space-y-2.5 ${isSelected ? 'bg-emerald-50/40 border-emerald-200' : 'bg-white border-slate-200'}`}
+              >
+                <div className="flex items-start gap-2.5">
+                  {tabFilter === 'pendentes' && (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleSelect(w.id)}
+                      className="cursor-pointer shrink-0 mt-1"
+                    >
+                      {isSelected ? (
+                        <CheckSquare className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <Square className="w-4 h-4 text-slate-300" />
+                      )}
+                    </button>
+                  )}
+
+                  <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-700 text-xs border border-slate-200 shrink-0 overflow-hidden">
+                    {w.avatar ? (
+                      <img src={w.avatar} alt={w.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{w.name.charAt(0)}</span>
+                    )}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-slate-900 truncate text-xs">{w.name}</div>
+                    <div className="text-[11px] text-slate-500 truncate mt-0.5">
+                      CPF: {w.cpf ? maskCpf(w.cpf) : 'Não inf.'}{w.phone && ` • ${maskPhone(w.phone)}`}
+                    </div>
+                  </div>
+
+                  <div className="shrink-0">
+                    {isPendente && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[9px] font-bold whitespace-nowrap">
+                        <Clock className="w-3 h-3" />
+                        <span>Pendente</span>
+                      </span>
+                    )}
+                    {isLiberado && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-bold whitespace-nowrap">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Liberado</span>
+                      </span>
+                    )}
+                    {isRejeitado && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[9px] font-bold whitespace-nowrap">
+                        <XCircle className="w-3 h-3" />
+                        <span>Não Lib.</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-slate-600 border-t border-slate-100 pt-2">
+                  <span className="font-bold text-emerald-800">{w.role}</span>
+                  <span className="text-slate-400"> • Coord: {w.coordinatorName} ({w.teamZone || 'Geral'})</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {w.voterRegistration ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-100">
+                      <Vote className="w-3 h-3" />
+                      <span>Título OK</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-medium">
+                      Sem título
+                    </span>
+                  )}
+                  {w.pixKey ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-100">
+                      <CreditCard className="w-3 h-3" />
+                      <span>PIX OK</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-medium">
+                      Sem PIX
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1.5 pt-1 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setViewingWorker(w)}
+                    className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer border border-slate-200 shrink-0"
+                    title="Visualizar ficha completa"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+
+                  {isPendente ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => { setRejectingWorker(w); setRejectionReason(''); setRejectionError(''); }}
+                        className="flex-1 px-2.5 py-2 border border-rose-200 text-rose-600 hover:bg-rose-50 rounded-lg font-bold text-xs transition-colors cursor-pointer"
+                      >
+                        Não Liberar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => liberarWorker(w.id)}
+                        className="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white rounded-lg font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
+                        <span>Liberar</span>
+                      </button>
+                    </>
+                  ) : isLiberado ? (
+                    <span className="flex-1 text-center text-[11px] text-emerald-700 font-semibold italic">
+                      Apto para trabalhar
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => liberarWorker(w.id, 'Reconsiderado e liberado para trabalhar.')}
+                      className="flex-1 px-2.5 py-2 text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg text-xs font-semibold transition-colors cursor-pointer border border-slate-200"
+                    >
+                      Reconsiderar
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* DESKTOP TABLE */}
+        <div className="hidden sm:block bg-white rounded-2xl border border-slate-200 shadow-xs">
           <table className="w-full text-left text-xs table-fixed">
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
               <tr>
@@ -526,6 +668,7 @@ export const AprovacoesView: React.FC = () => {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {/* Modal Rejection Justification */}
