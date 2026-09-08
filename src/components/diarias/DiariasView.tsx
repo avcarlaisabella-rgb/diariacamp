@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { DailyRecord, Worker, WorkerAbsence, User } from '../../types';
 import { formatMoney, DEFAULT_AVATAR } from '../../utils/formatters';
+import { isWorkerLiberado } from '../../utils/workerStatus';
 import { 
   Search, 
   Calendar, 
@@ -133,10 +134,11 @@ export const DiariasView: React.FC<DiariasViewProps> = ({ mode = 'all' }) => {
   // Is the current logged in user a coordinator?
   const isCoordinator = currentUser?.role === 'coordenador';
 
-  // Eligible workers based on user permissions
+  // Eligible workers based on user permissions (só quem já foi liberado pode ter frequência lançada)
   const eligibleWorkers = useMemo(() => {
     return workers.filter(w => {
       if (w.status === 'Inativo') return false;
+      if (!isWorkerLiberado(w)) return false;
       if (isCoordinator) {
         return w.coordinatorId === currentUser?.id;
       }

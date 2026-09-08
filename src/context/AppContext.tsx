@@ -16,6 +16,7 @@ import {
   PaymentReversal,
   WorkerRoleType,
 } from '../types';
+import { isWorkerLiberado } from '../utils/workerStatus';
 import { loginAsRoleAction, logoutAction } from '../app/actions/session';
 import {
   persistCreateWorker,
@@ -219,6 +220,12 @@ export const AppProvider: React.FC<{
     if (!currentUser) return;
     const now = new Date().toISOString();
 
+    const worker = workers.find(w => w.id === newDiariaData.workerId);
+    if (worker && !isWorkerLiberado(worker)) {
+      showNotification(`${worker.name} ainda não foi liberado na tela de Aprovações. Libere o cadastro antes de lançar diárias.`);
+      return;
+    }
+
     // Check duplicate
     const dupCheck = checkWorkerDuplicate(newDiariaData.workerId, newDiariaData.date);
     if (dupCheck.isDuplicate && currentUser.role !== 'admin') {
@@ -270,6 +277,11 @@ export const AppProvider: React.FC<{
     for (const item of input.workers) {
       const worker = workers.find(w => w.id === item.workerId);
       if (!worker) continue;
+
+      if (!isWorkerLiberado(worker)) {
+        errors.push(`${worker.name}: ainda não foi liberado na tela de Aprovações.`);
+        continue;
+      }
 
       // Duplicate check
       const dup = checkWorkerDuplicate(worker.id, input.date);
@@ -366,6 +378,7 @@ export const AppProvider: React.FC<{
       for (const item of records) {
         const worker = workers.find(w => w.id === item.workerId);
         if (!worker) continue;
+        if (!isWorkerLiberado(worker)) continue;
 
         const existingIndex = updated.findIndex(
           d => d.workerId === worker.id && d.date === date && d.status !== 'Cancelada'
@@ -998,14 +1011,17 @@ export const AppProvider: React.FC<{
   // Worker operations
   const addWorker = (workerData: Omit<Worker, 'id'>) => {
     const now = new Date().toISOString();
+    // Cadastro feito por Gestor ou Administrador entra direto liberado;
+    // cadastro feito por Coordenador precisa passar pela fila de Aprovações.
+    const autoLiberado = currentUser?.role === 'admin' || currentUser?.role === 'gestor';
     const newWorker: Worker = {
       ...workerData,
       id: `wrk_${Date.now()}`,
-      status: currentUser?.role === 'admin' ? (workerData.status || 'Ativo') : 'Aguardando Liberação',
-      approvalStatus: currentUser?.role === 'admin' ? 'Liberado' : 'Pendente',
+      status: autoLiberado ? (workerData.status || 'Ativo') : 'Aguardando Liberação',
+      approvalStatus: autoLiberado ? 'Liberado' : 'Pendente',
       registrationDate: now.split('T')[0],
-      approvedByName: currentUser?.role === 'admin' ? currentUser.name : undefined,
-      approvalDate: currentUser?.role === 'admin' ? now : undefined,
+      approvedByName: autoLiberado ? currentUser?.name : undefined,
+      approvalDate: autoLiberado ? now : undefined,
     };
     setWorkers(prev => [newWorker, ...prev]);
     sync(persistCreateWorker(newWorker));

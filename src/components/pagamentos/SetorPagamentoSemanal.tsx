@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { DailyRecord, Worker, FinancialPayment, PaymentMethod } from '../../types';
 import { formatMoney, formatDate, maskPixKey, maskCpf, exportToCsv, DEFAULT_AVATAR } from '../../utils/formatters';
+import { isWorkerLiberado } from '../../utils/workerStatus';
 import { ReciboAssinaturaModal } from '../financeiro/ReciboAssinaturaModal';
 import { 
   ChevronLeft, 
@@ -154,12 +155,13 @@ export const SetorPagamentoSemanal: React.FC<SetorPagamentoSemanalProps> = ({
     };
   }, [weekOffset]);
 
-  // 2. Base list of workers (filtered by allowedCoordinatorIds if provided)
+  // 2. Base list of workers (filtered por liberação e por allowedCoordinatorIds, se houver)
   const baseWorkers = useMemo(() => {
+    const liberados = workers.filter(isWorkerLiberado);
     if (!allowedCoordinatorIds || allowedCoordinatorIds.length === 0) {
-      return workers;
+      return liberados;
     }
-    return workers.filter(w => allowedCoordinatorIds.includes(w.coordinatorId));
+    return liberados.filter(w => allowedCoordinatorIds.includes(w.coordinatorId));
   }, [workers, allowedCoordinatorIds]);
 
   // Available coordinators for dropdown filter

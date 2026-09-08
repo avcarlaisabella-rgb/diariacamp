@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatMoney, DEFAULT_AVATAR } from '../../utils/formatters';
+import { isWorkerLiberado } from '../../utils/workerStatus';
 import { 
   X, 
   Calendar, 
@@ -29,9 +30,11 @@ export const NovaDiariaModal: React.FC = () => {
   const [presenceMap, setPresenceMap] = useState<Record<string, boolean>>({});
 
   // Filter workers for coordinator's team, or all active workers for gestor/admin
+  // (só entra quem já foi liberado na tela de Aprovações)
   const eligibleWorkers = useMemo(() => {
     return workers.filter(w => {
       if (w.status === 'Inativo') return false;
+      if (!isWorkerLiberado(w)) return false;
       if (currentUser?.role === 'coordenador') {
         return w.coordinatorId === currentUser.id;
       }
